@@ -19,17 +19,6 @@ REFERENCE_colours = {
 }
 ```
 
-5. (Optional) Define the cut-off percentage to display the colours histogram (from 0 to 1).
-
-6. (Optional) Set colours that should be ignored during the analysis.  
-Colours should be specified in RGB form as `(R, G, B)`, e.g.:
-```python
-IGNORE_COLOURS = {
-    (255,255,255),
-    (0, 0, 0),
-}
-```
-
 Execute the script.
 
 The script will read the images contained in the folder specified in `input_folder` and for each of them it will produce in `output_folder` a JSON file containing the absolute and relative frequency for each colour. It will also generate an hystogram for each image with the colours' occurrences. If a threshold is defined, only the hystograms related to the colours whose relative frequency is above it will be displayed.

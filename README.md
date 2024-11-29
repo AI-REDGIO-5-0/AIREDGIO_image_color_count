@@ -1,0 +1,1 @@
+# AIREDGIO_image_color_count

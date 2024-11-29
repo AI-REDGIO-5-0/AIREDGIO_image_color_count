@@ -24,33 +24,20 @@ output_folder = ''
 # 3. (Optional) Set the reference colours, if needed. Other colours different from the specified reference colours will be counted as the most similar reference colour. If no reference colour is specified, each colour is counted as is.  
 # Reference colours should be specified as `"<colour_name>": (R, G, B)`, e.g.:
 # ```python
-# REFERENCE_colourS = {
+# REFERENCE_colours = {
 #     "background": (255,255,255),
 #     ...
 # }
 # ```
 
 # %%
-REFERENCE_colourS = {}
+REFERENCE_colours = {}
 
 # %% [markdown]
 # 4. (Optional) Define the cut-off percentage to display the colours histogram (from 0 to 1).
 
 # %%
 treshold_plot = 0.01
-
-# %% [markdown]
-# 5. (Optional) Set colours that should be ignored during the analysis.  
-# Colours should be specified in RGB form as `(R, G, B)`, e.g.:
-# ```python
-# IGNORE_colourS = {
-#     (255,255,255),
-#     (0, 0, 0),
-# }
-# ```
-
-# %%
-IGNORE_colourS = {}
 
 # %% [markdown]
 # ## Script execution
@@ -100,7 +87,7 @@ def closest_reference_colour(colour: tuple[float, ...], references: dict[str, tu
 # Count all the colours' occurrences
 
 # %%
-def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, dict[str, float]]:
+def colours(image, references: dict = dict()) -> dict[str, dict[str, float]]:
     aggregated_data = {}
     try:
         # Get all pixels as a flat list
@@ -108,8 +95,6 @@ def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, 
         unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
         pixels = zip(unique_elements, counts)
         # Process the image
-        if ignore:
-            pixels = [p for p in pixels if p[0] not in ignore]
         if references:
             def closest_colour(c: tuple[float, ...]):
                 return closest_reference_colour(c, references)
@@ -118,9 +103,6 @@ def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, 
             #     tqdm(pixels, desc='Finding similar colours...')
             # )
             pixels = [(closest_colour(c[0]), c[1]) for c in tqdm(pixels, desc='Finding similar colours...')]
-        # unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
-        # data = dict(zip(unique_elements, counts))
-        # data = dict(Counter(pixels))
         # Initialize a defaultdict
         accumulator = defaultdict(int)
         # Accumulate counts
@@ -195,7 +177,7 @@ for f in progress:
         with Image.open(filepath) as img:
             # img.verify()
             print()
-            counts = colours(img, REFERENCE_colourS)
+            counts = colours(img, REFERENCE_colours)
         counts_filename, _ = os.path.splitext(f)
         counts_filepath = os.path.join(output_folder_path_file, f'{counts_filename}.json')
         with open(counts_filepath, 'w') as out_file:

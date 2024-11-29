@@ -10,12 +10,13 @@ Instructions for use:
 
 3. Set the folder to save the computation results. Defaults to the directory the script is executing. 
 
-4. (Optional) Set the reference colours, if needed. Other colours different from the specified reference colours will be counted as the most similar reference colour: similarity is computed as the euclidean distance between the RGBs values. If no reference colour is specified, each colour is counted separately.  
+4. 3. (Optional) Set the reference colours, if needed. Other colours different from the specified reference colours will be counted as the most similar reference colour. If no reference colour is specified, each colour is counted as is.  
 Reference colours should be specified as `"<colour_name>": (R, G, B)`, e.g.:
 ```python
-REFERENCE_COLORS = {
+REFERENCE_colourS = {
     "background": (255,255,255),
     ...
+}
 ```
 
 5. (Optional) Define the cut-off percentage to display the colours histogram (from 0 to 1).

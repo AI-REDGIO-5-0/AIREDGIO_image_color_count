@@ -13,7 +13,7 @@ Instructions for use:
 4. 3. (Optional) Set the reference colours, if needed. Other colours different from the specified reference colours will be counted as the most similar reference colour. If no reference colour is specified, each colour is counted as is.  
 Reference colours should be specified as `"<colour_name>": (R, G, B)`, e.g.:
 ```python
-REFERENCE_colourS = {
+REFERENCE_colours = {
     "background": (255,255,255),
     ...
 }
@@ -24,7 +24,7 @@ REFERENCE_colourS = {
 6. (Optional) Set colours that should be ignored during the analysis.  
 Colours should be specified in RGB form as `(R, G, B)`, e.g.:
 ```python
-IGNORE_COLORS = {
+IGNORE_COLOURS = {
     (255,255,255),
     (0, 0, 0),
 }

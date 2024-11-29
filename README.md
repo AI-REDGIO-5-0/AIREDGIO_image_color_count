@@ -31,4 +31,4 @@ IGNORE_COLORS = {
 
 Execute the script.
 
-The script will read the images contained in the folder specified in `input_folder` and for each of them it will produce in `output_folder` a JSON file containing the absolute and percentual frequency for each colour. It will also generate an hystogram for each image with the colours' occurrences. If a threshold is defined, only the hystograms related to the colours whose percentual frequency is above it will be displayed.
+The script will read the images contained in the folder specified in `input_folder` and for each of them it will produce in `output_folder` a JSON file containing the absolute and relative frequency for each colour. It will also generate an hystogram for each image with the colours' occurrences. If a threshold is defined, only the hystograms related to the colours whose relative frequency is above it will be displayed.

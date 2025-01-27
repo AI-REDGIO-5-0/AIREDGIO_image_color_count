@@ -32,6 +32,7 @@ output_folder = ''
 
 # %%
 REFERENCE_colours = {}
+IGNORE_colours = {}
 
 # %% [markdown]
 # 4. (Optional) Define the cut-off percentage to display the colours histogram (from 0 to 1).
@@ -93,26 +94,19 @@ def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, 
         # Get all pixels as a flat list
         pixels = list(image.convert("RGB").getdata())
         unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
-        pixels = zip(unique_elements, counts)
+        pixels = zip(map(tuple, unique_elements.tolist()), counts)
         # Process the image
         if ignore:
             pixels = [p for p in pixels if p[0] not in ignore]
         if references:
             def closest_colour(c: tuple[float, ...]):
                 return closest_reference_colour(c, references)
-            # pixels = map(
-            #     closest_colour,
-            #     tqdm(pixels, desc='Finding similar colours...')
-            # )
             pixels = [(closest_colour(c[0]), c[1]) for c in tqdm(pixels, desc='Finding similar colours...')]
-        # unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
-        # data = dict(zip(unique_elements, counts))
-        # data = dict(Counter(pixels))
         # Initialize a defaultdict
         accumulator = defaultdict(int)
         # Accumulate counts
         for a, b in pixels:
-            accumulator[f'{a[0]} {a[1]} {a[2]}'] += int(b)
+            accumulator[a] += int(b)
         data = dict(accumulator)
         total = sum(data.values())
         aggregated_data = {
@@ -123,7 +117,7 @@ def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, 
             for k, v in data.items()
         }
         for k, v in aggregated_data.items():
-            v['rgb'] = *map(int, references.get(k, k).split(' ')),
+            v['rgb'] = references.get(k, k)
     except FileNotFoundError:
         print("Error: File not found. Please provide a valid image path.")
     except Exception as e:
@@ -183,7 +177,7 @@ for f in progress:
         with Image.open(filepath) as img:
             # img.verify()
             print()
-            counts = colours(img, REFERENCE_colours)
+            counts = colours(img, REFERENCE_colours, IGNORE_colours)
         counts_filename, _ = os.path.splitext(f)
         counts_filepath = os.path.join(output_folder_path_file, f'{counts_filename}.json')
         with open(counts_filepath, 'w') as out_file:

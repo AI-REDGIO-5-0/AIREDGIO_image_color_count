@@ -87,7 +87,7 @@ def closest_reference_colour(colour: tuple[float, ...], references: dict[str, tu
 # Count all the colours' occurrences
 
 # %%
-def colours(image, references: dict = dict()) -> dict[str, dict[str, float]]:
+def colours(image, references: dict = dict(), ignore: set = set()) -> dict[str, dict[str, float]]:
     aggregated_data = {}
     try:
         # Get all pixels as a flat list
@@ -95,6 +95,8 @@ def colours(image, references: dict = dict()) -> dict[str, dict[str, float]]:
         unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
         pixels = zip(unique_elements, counts)
         # Process the image
+        if ignore:
+            pixels = [p for p in pixels if p[0] not in ignore]
         if references:
             def closest_colour(c: tuple[float, ...]):
                 return closest_reference_colour(c, references)
@@ -103,11 +105,14 @@ def colours(image, references: dict = dict()) -> dict[str, dict[str, float]]:
             #     tqdm(pixels, desc='Finding similar colours...')
             # )
             pixels = [(closest_colour(c[0]), c[1]) for c in tqdm(pixels, desc='Finding similar colours...')]
+        # unique_elements, counts = np.unique(pixels, return_counts=True, axis=0)
+        # data = dict(zip(unique_elements, counts))
+        # data = dict(Counter(pixels))
         # Initialize a defaultdict
         accumulator = defaultdict(int)
         # Accumulate counts
         for a, b in pixels:
-            accumulator[a] += int(b)
+            accumulator[f'{a[0]} {a[1]} {a[2]}'] += int(b)
         data = dict(accumulator)
         total = sum(data.values())
         aggregated_data = {
@@ -118,13 +123,14 @@ def colours(image, references: dict = dict()) -> dict[str, dict[str, float]]:
             for k, v in data.items()
         }
         for k, v in aggregated_data.items():
-            v['rgb'] = references.get(k, k)
+            v['rgb'] = *map(int, references.get(k, k).split(' ')),
     except FileNotFoundError:
         print("Error: File not found. Please provide a valid image path.")
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
         return aggregated_data
+        
 
 # %% [markdown]
 # Create a histogram with the colours' occurrences
